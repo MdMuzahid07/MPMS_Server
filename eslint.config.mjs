@@ -1,52 +1,39 @@
-// @ts-check
 import pluginJs from "@eslint/js";
+import eslintConfigPrettier from "eslint-config-prettier";
+import simpleImportSort from "eslint-plugin-simple-import-sort";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 
-export default tseslint.config(
-  // ======= Global Ignores =======
-  {
-    ignores: ["node_modules/", "dist/", "**/*.js"],
-  },
-
-  // ======= Base JS Recommended =======
+export default [
   pluginJs.configs.recommended,
-
-  // ======= TypeScript Recommended =======
   ...tseslint.configs.recommended,
-
-  // ======= Custom Overrides =======
+  eslintConfigPrettier,
   {
-    files: ["**/*.ts"],
+    ignores: ["**/node_modules/", "./dist/"],
     languageOptions: {
-      globals: {
-        ...globals.node,
-      },
+      globals: { ...globals.node, process: "readonly" },
+    },
+    plugins: {
+      "simple-import-sort": simpleImportSort,
     },
     rules: {
-      // ======= Disabled - TS Version Handles This =======
       "no-unused-vars": "off",
+      "no-unused-expressions": "error",
+      "prefer-const": "error",
+      "no-undef": "off",
+      "no-console": "warn",
+      semi: "warn",
+      "simple-import-sort/imports": "error",
+      "simple-import-sort/exports": "error",
+      "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/no-unused-vars": [
-        "error",
+        "warn",
         {
           argsIgnorePattern: "^_",
           varsIgnorePattern: "^_",
           caughtErrorsIgnorePattern: "^_",
         },
       ],
-
-      // ======= Disabled - TypeScript Compiler Handles This =======
-      "no-undef": "off",
-
-      // ======= General Rules =======
-      "no-unused-expressions": "error",
-      "prefer-const": "error",
-      "no-console": "warn",
-
-      // ======= TypeScript Specific =======
-      "@typescript-eslint/no-explicit-any": "warn",
-      "@typescript-eslint/no-require-imports": "error",
-      "@typescript-eslint/consistent-type-imports": "warn",
     },
-  }
-);
+  },
+];

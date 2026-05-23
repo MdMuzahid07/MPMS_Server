@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
-import { Schema, model } from "mongoose";
+import { model, Schema } from "mongoose";
+
 import type { IUser } from "./user.interface";
 
 const SALT_ROUNDS = 12;
@@ -52,7 +53,7 @@ const userSchema = new Schema<IUser>(
   {
     timestamps: true,
     toJSON: {
-      transform(_doc, ret) {
+      transform(_doc, ret: any) {
         delete ret.password;
         delete ret.avatarPublicId;
         delete ret.__v;
