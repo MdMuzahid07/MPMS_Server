@@ -2,6 +2,8 @@ import httpStatus from "http-status";
 import type { FilterQuery } from "mongoose";
 import { Types } from "mongoose";
 import AppError from "../../errors/AppError";
+import { TaskModel } from "../task/task.model";
+import { TimeLogModel } from "../timelog/timelog.model";
 import { UploadService } from "../upload/upload.service";
 import type { ICreateUser, IUpdateUser, IUser, IUserFilters } from "./user.interface";
 import { UserModel } from "./user.model";
@@ -158,75 +160,69 @@ const changePassword = async (
   await user.save(); // triggers pre-save hash
 };
 
-// const getUserStats = async (id: string) => {
-//   if (!Types.ObjectId.isValid(id)) {
-//     throw new AppError(httpStatus.BAD_REQUEST, "Invalid user ID");
-//   }
+const getUserStats = async (id: string) => {
+  if (!Types.ObjectId.isValid(id)) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Invalid user ID");
+  }
 
-//   // Lazy imports to avoid circular dependencies at module load time
-//   const { TaskModel } = await import("../task/task.model");
-//   const { TimeLogModel } = await import("../timelog/timelog.model");
+  const objectId = new Types.ObjectId(id);
 
-//   const objectId = new Types.ObjectId(id);
+  const [assigned, completed, inProgress, inReview, timeAgg] = await Promise.all([
+    TaskModel.countDocuments({ assignees: objectId }),
+    TaskModel.countDocuments({ assignees: objectId, status: "DONE" }),
+    TaskModel.countDocuments({ assignees: objectId, status: "IN_PROGRESS" }),
+    TaskModel.countDocuments({ assignees: objectId, status: "REVIEW" }),
+    TimeLogModel.aggregate([
+      { $match: { user: objectId } },
+      { $group: { _id: null, totalHours: { $sum: "$hours" } } },
+    ]),
+  ]);
 
-//   const [assigned, completed, inProgress, inReview, timeAgg] = await Promise.all([
-//     TaskModel.countDocuments({ assignees: objectId }),
-//     TaskModel.countDocuments({ assignees: objectId, status: "DONE" }),
-//     TaskModel.countDocuments({ assignees: objectId, status: "IN_PROGRESS" }),
-//     TaskModel.countDocuments({ assignees: objectId, status: "REVIEW" }),
-//     TimeLogModel.aggregate([
-//       { $match: { user: objectId } },
-//       { $group: { _id: null, totalHours: { $sum: "$hours" } } },
-//     ]),
-//   ]);
+  return {
+    assigned,
+    completed,
+    inProgress,
+    inReview,
+    todo: assigned - completed - inProgress - inReview,
+    totalHoursLogged: timeAgg[0]?.totalHours ?? 0,
+    completionRate: assigned > 0 ? Math.round((completed / assigned) * 100) : 0,
+  };
+};
 
-//   return {
-//     assigned,
-//     completed,
-//     inProgress,
-//     inReview,
-//     todo: assigned - completed - inProgress - inReview,
-//     totalHoursLogged: timeAgg[0]?.totalHours ?? 0,
-//     completionRate: assigned > 0 ? Math.round((completed / assigned) * 100) : 0,
-//   };
-// };
+const getUserTasks = async (id: string, status?: string, page = 1, limit = 20) => {
+  if (!Types.ObjectId.isValid(id)) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Invalid user ID");
+  }
 
-// const getUserTasks = async (id: string, status?: string, page = 1, limit = 20) => {
-//   if (!Types.ObjectId.isValid(id)) {
-//     throw new AppError(httpStatus.BAD_REQUEST, "Invalid user ID");
-//   }
+  const filter: FilterQuery<unknown> = {
+    assignees: new Types.ObjectId(id),
+  };
+  if (status) filter.status = status;
 
-//   const { TaskModel } = await import("../task/task.model");
+  const skip = (page - 1) * limit;
 
-//   const filter: FilterQuery<unknown> = {
-//     assignees: new Types.ObjectId(id),
-//   };
-//   if (status) filter.status = status;
+  const [tasks, total] = await Promise.all([
+    TaskModel.find(filter)
+      .populate("sprint", "title sprintNumber")
+      .populate("project", "title")
+      .select("title status priority dueDate estimate taskNumber")
+      .sort({ dueDate: 1, priority: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+    TaskModel.countDocuments(filter),
+  ]);
 
-//   const skip = (page - 1) * limit;
-
-//   const [tasks, total] = await Promise.all([
-//     TaskModel.find(filter)
-//       .populate("sprint", "title sprintNumber")
-//       .populate("project", "title")
-//       .select("title status priority dueDate estimate taskNumber")
-//       .sort({ dueDate: 1, priority: -1 })
-//       .skip(skip)
-//       .limit(limit)
-//       .lean(),
-//     TaskModel.countDocuments(filter),
-//   ]);
-
-//   return {
-//     tasks,
-//     pagination: {
-//       total,
-//       page,
-//       limit,
-//       totalPages: Math.ceil(total / limit),
-//     },
-//   };
-// };
+  return {
+    tasks,
+    pagination: {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    },
+  };
+};
 
 export const UserService = {
   getAllUsers,
@@ -235,4 +231,6 @@ export const UserService = {
   updateUser,
   deleteUser,
   changePassword,
+  getUserStats,
+  getUserTasks,
 };

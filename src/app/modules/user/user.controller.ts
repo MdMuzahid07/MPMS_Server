@@ -72,30 +72,30 @@ const changePassword = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-// const getUserStats = catchAsync(async (req: Request, res: Response) => {
-//   const stats = await UserService.getUserStats(req.params.id);
-//   sendResponse(res, {
-//     statusCode: httpStatus.OK,
-//     success: true,
-//     message: "User stats retrieved",
-//     data: stats,
-//   });
-// });
+const getUserStats = catchAsync(async (req: Request, res: Response) => {
+  const stats = await UserService.getUserStats(req.params.id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "User stats retrieved",
+    data: stats,
+  });
+});
 
-// const getUserTasks = catchAsync(async (req: Request, res: Response) => {
-//   const result = await UserService.getUserTasks(
-//     req.params.id,
-//     req.query.status as string,
-//     Number(req.query.page) || 1,
-//     Number(req.query.limit) || 20
-//   );
-//   sendResponse(res, {
-//     statusCode: httpStatus.OK,
-//     success: true,
-//     message: "User tasks retrieved",
-//     data: result,
-//   });
-// });
+const getUserTasks = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserService.getUserTasks(
+    req.params.id,
+    req.query.status as string,
+    Number(req.query.page) || 1,
+    Number(req.query.limit) || 20
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "User tasks retrieved",
+    data: result,
+  });
+});
 
 export const UserController = {
   getAllUsers,
@@ -104,4 +104,6 @@ export const UserController = {
   updateUser,
   deleteUser,
   changePassword,
+  getUserStats,
+  getUserTasks,
 };

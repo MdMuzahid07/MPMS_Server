@@ -19,7 +19,7 @@ router.post(
   UploadController.uploadAttachment
 );
 
-// Delete by public_id (URL-encoded)
+// Delete by public-id (URL-encoded)
 router.delete("/:publicId(*)", authorizationGuard("ADMIN"), UploadController.deleteFile);
 
 export const UploadRoutes = router;
