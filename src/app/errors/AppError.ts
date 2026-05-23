@@ -12,7 +12,7 @@
  * throw new CustomAppError(400, "Invalid project data");
  */
 
-class CustomAppError extends Error {
+class AppError extends Error {
   public statusCode: number;
 
   constructor(statusCode: number, message: string, stack?: string) {
@@ -27,4 +27,4 @@ class CustomAppError extends Error {
   }
 }
 
-export default CustomAppError;
+export default AppError;

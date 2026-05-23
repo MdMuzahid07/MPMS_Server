@@ -1,12 +1,8 @@
 import bcrypt from "bcrypt";
 import httpStatus from "http-status";
 import config from "../../config";
-import CustomAppError from "../../errors/CustomAppError";
-import {
-  ILoginPayload,
-  IRegisterPayload,
-  ITokenPayload,
-} from "./auth.interface";
+import CustomAppError from "../../errors/AppError";
+import { ILoginPayload, IRegisterPayload, ITokenPayload } from "./auth.interface";
 import { UserModel } from "./auth.model";
 import { createToken, verifyToken } from "./auth.utils";
 
@@ -48,10 +44,7 @@ const assertUserExists = async (email: string) => {
 
 //service methods
 
-const registerUser = async (
-  payload: IRegisterPayload,
-  isInvite = false
-) => {
+const registerUser = async (payload: IRegisterPayload, isInvite = false) => {
   // Prevent role escalation on public register
   if (!isInvite) {
     payload.role = "member";
@@ -60,10 +53,7 @@ const registerUser = async (
   const existing = await UserModel.findOne({ email: payload.email });
 
   if (existing) {
-    throw new CustomAppError(
-      httpStatus.CONFLICT,
-      "A user with this email already exists"
-    );
+    throw new CustomAppError(httpStatus.CONFLICT, "A user with this email already exists");
   }
 
   const user = await UserModel.create({
@@ -96,9 +86,7 @@ const registerUser = async (
 };
 
 const loginUser = async (payload: ILoginPayload) => {
-  const user = await UserModel.findOne({ email: payload.email }).select(
-    "+password"
-  );
+  const user = await UserModel.findOne({ email: payload.email }).select("+password");
 
   if (!user) {
     throw new CustomAppError(httpStatus.UNAUTHORIZED, "Invalid credentials");
@@ -112,10 +100,7 @@ const loginUser = async (payload: ILoginPayload) => {
     throw new CustomAppError(httpStatus.FORBIDDEN, "User account is deleted");
   }
 
-  const isPasswordMatched = await bcrypt.compare(
-    payload.password,
-    user.password
-  );
+  const isPasswordMatched = await bcrypt.compare(payload.password, user.password);
 
   // Same error message for wrong email or wrong password
   // -- prevents user enumeration attacks
@@ -144,10 +129,7 @@ const loginUser = async (payload: ILoginPayload) => {
 };
 
 const refreshToken = async (token: string) => {
-  const decoded = verifyToken(
-    token,
-    config.jwt_refresh_token_secret_key as string
-  );
+  const decoded = verifyToken(token, config.jwt_refresh_token_secret_key as string);
 
   const user = await UserModel.findById(decoded.userId);
 
@@ -175,9 +157,7 @@ const refreshToken = async (token: string) => {
 };
 
 const getMe = async (userId: string) => {
-  const user = await UserModel.findById(userId).select(
-    "-password -isDeleted"
-  );
+  const user = await UserModel.findById(userId).select("-password -isDeleted");
 
   if (!user) {
     throw new CustomAppError(httpStatus.NOT_FOUND, "User not found");
@@ -186,11 +166,7 @@ const getMe = async (userId: string) => {
   return user;
 };
 
-const changePassword = async (
-  userId: string,
-  oldPassword: string,
-  newPassword: string
-) => {
+const changePassword = async (userId: string, oldPassword: string, newPassword: string) => {
   const user = await UserModel.findById(userId).select("+password");
 
   if (!user) {
@@ -200,10 +176,7 @@ const changePassword = async (
   const isMatched = await bcrypt.compare(oldPassword, user.password);
 
   if (!isMatched) {
-    throw new CustomAppError(
-      httpStatus.UNAUTHORIZED,
-      "Old password is incorrect"
-    );
+    throw new CustomAppError(httpStatus.UNAUTHORIZED, "Old password is incorrect");
   }
 
   // Assign and save -- pre-save hook will hash it
