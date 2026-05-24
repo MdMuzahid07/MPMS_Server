@@ -11,6 +11,7 @@
 
 import multer from "multer";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
+
 import cloudinaryConfig from "./cloudinary.config";
 
 /**
@@ -27,6 +28,7 @@ const ALLOWED_MIME_TYPES = [
   "video/mp4",
   "video/webm",
   "video/ogg",
+  "application/pdf",
 ];
 
 /**
@@ -88,7 +90,7 @@ const storage = new CloudinaryStorage({
 
     return {
       folder: getFolder(),
-      allowed_formats: ["jpg", "jpeg", "png", "webp", "gif", "svg", "mp4", "webm", "ogg"],
+      allowed_formats: ["jpg", "jpeg", "png", "webp", "gif", "svg", "mp4", "webm", "ogg", "pdf"],
       transformation: [
         {
           width: 1200,

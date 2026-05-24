@@ -1,5 +1,12 @@
 import { z } from "zod";
 
+const attachmentSchema = z.object({
+  url: z.string().url(),
+  publicId: z.string(),
+  filename: z.string(),
+  resourceType: z.enum(["image", "raw"]).optional(),
+});
+
 const createTask = z.object({
   body: z.object({
     title: z.string().min(2).max(200),
@@ -9,6 +16,7 @@ const createTask = z.object({
     priority: z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL"]).default("MEDIUM"),
     status: z.enum(["TODO", "IN_PROGRESS", "REVIEW", "DONE"]).default("TODO"),
     dueDate: z.coerce.date().optional(),
+    attachments: z.array(attachmentSchema).optional(),
   }),
 });
 
@@ -22,6 +30,7 @@ const updateTask = z.object({
     status: z.enum(["TODO", "IN_PROGRESS", "REVIEW", "DONE"]).optional(),
     dueDate: z.coerce.date().optional(),
     sprint: z.string().optional(),
+    attachments: z.array(attachmentSchema).optional(),
   }),
 });
 

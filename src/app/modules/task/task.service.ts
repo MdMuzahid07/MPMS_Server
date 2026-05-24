@@ -1,5 +1,6 @@
 import httpStatus from "http-status";
 import { Types } from "mongoose";
+
 import AppError from "../../errors/AppError";
 import { ActivityLogService } from "../activity/activity.service";
 import { SprintModel } from "../sprint/sprint.model";
@@ -80,6 +81,13 @@ const createTask = async (
 
   const taskNumber = lastTask ? lastTask.taskNumber + 1 : 1;
 
+  const attachments =
+    payload.attachments?.map((att) => ({
+      ...att,
+      uploadedBy: new Types.ObjectId(createdBy),
+      uploadedAt: new Date(),
+    })) ?? [];
+
   const task = await TaskModel.create({
     ...payload,
     sprint: new Types.ObjectId(sprintId),
@@ -87,6 +95,7 @@ const createTask = async (
     reporter: new Types.ObjectId(createdBy),
     createdBy: new Types.ObjectId(createdBy),
     assignees: payload.assignees?.map((id) => new Types.ObjectId(id)) ?? [],
+    attachments,
     taskNumber,
   });
 
@@ -111,6 +120,23 @@ const updateTask = async (taskId: string, payload: IUpdateTask, userId: string):
   }
   if (payload.sprint) {
     updatePayload.sprint = new Types.ObjectId(payload.sprint);
+  }
+
+  if (payload.attachments) {
+    const newPublicIds = new Set(payload.attachments.map((a) => a.publicId));
+    const deletedAttachments = existing.attachments.filter((a) => !newPublicIds.has(a.publicId));
+    for (const delAtt of deletedAttachments) {
+      try {
+        await UploadService.deleteFile(delAtt.publicId);
+      } catch (err) {
+        console.error("Failed to delete attachment from Cloudinary:", err);
+      }
+    }
+    updatePayload.attachments = payload.attachments.map((att) => ({
+      ...att,
+      uploadedBy: new Types.ObjectId(userId),
+      uploadedAt: new Date(),
+    }));
   }
 
   const updated = await TaskModel.findByIdAndUpdate(taskId, updatePayload, {

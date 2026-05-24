@@ -51,6 +51,13 @@ export interface ITaskFilters {
   limit?: number;
 }
 
+export interface ICreateAttachmentInput {
+  url: string;
+  publicId: string;
+  filename: string;
+  resourceType?: "image" | "raw";
+}
+
 export interface ICreateTask {
   title: string;
   description?: string;
@@ -59,6 +66,7 @@ export interface ICreateTask {
   priority?: TTaskPriority;
   status?: TTaskStatus;
   dueDate?: Date;
+  attachments?: ICreateAttachmentInput[];
 }
 
 export interface IUpdateTask extends Partial<ICreateTask> {

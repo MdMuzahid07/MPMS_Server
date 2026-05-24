@@ -1,6 +1,8 @@
 import { Router } from "express";
+
 import authorizationGuard from "../../middlewares/authorizationGuard";
 import requestValidator from "../../middlewares/requestValidator";
+import { sprintTaskRouter } from "../task/task.routes";
 import { SprintController } from "./sprint.controller";
 import { SprintValidation } from "./sprint.validation";
 
@@ -35,5 +37,7 @@ router.patch(
 );
 
 router.delete("/:id", authorizationGuard("ADMIN", "MANAGER"), SprintController.deleteSprint);
+
+router.use("/:sprintId/tasks", sprintTaskRouter);
 
 export const SprintRoutes = router;

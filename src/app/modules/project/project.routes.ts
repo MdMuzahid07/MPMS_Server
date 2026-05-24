@@ -3,6 +3,7 @@ import { Router } from "express";
 import multerUploadConfig from "../../config/multer.config";
 import authorizationGuard from "../../middlewares/authorizationGuard";
 import requestValidator from "../../middlewares/requestValidator";
+import { SprintRoutes } from "../sprint/sprint.routes";
 import { ProjectController } from "./project.controller";
 import { ProjectValidation } from "./project.validation";
 
@@ -39,5 +40,7 @@ router.delete(
   authorizationGuard("ADMIN", "MANAGER"),
   ProjectController.removeMember
 );
+
+router.use("/:projectId/sprints", SprintRoutes);
 
 export const ProjectRoutes = router;
