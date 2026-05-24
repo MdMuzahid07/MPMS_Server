@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import jwt, { JwtPayload } from "jsonwebtoken";
+
 import config from "../config";
 import CustomAppError from "../errors/AppError";
 
@@ -15,27 +16,36 @@ const authorizationGuard = (...requiredRoles: string[]) => {
 
       // checking the token, valid or invalid
       jwt.verify(token, config.jwt_access_token_secret_key as string, function (err, decoded) {
-        // if the token is invalid then it will throw error
+        // if the token is invalid then it will send error to global error handler
         if (err) {
-          throw new CustomAppError(httpStatus.UNAUTHORIZED, "you are not authorized");
+          return next(new CustomAppError(httpStatus.UNAUTHORIZED, "you are not authorized"));
         }
 
         const decodedPayload = decoded as JwtPayload;
-        // storing te role from, the decoded
+        // storing the role from the decoded payload
         const role = decodedPayload.role;
 
-        // checking the role is includes or not in ...requiredRoles
-        if (requiredRoles.length > 0 && !requiredRoles.includes(role)) {
-          throw new CustomAppError(httpStatus.UNAUTHORIZED, "you are not authorized");
+        // Perform case-insensitive checks to unify lowercase/uppercase differences
+        const upperRole = role ? String(role).toUpperCase() : "";
+        const upperRequiredRoles = requiredRoles.map((r) => r.toUpperCase());
+
+        // checking if the role is included in the requiredRoles
+        if (requiredRoles.length > 0 && !upperRequiredRoles.includes(upperRole)) {
+          return next(new CustomAppError(httpStatus.UNAUTHORIZED, "you are not authorized"));
+        }
+
+        // Ensure _id exists even for old tokens using userId
+        if (!decodedPayload._id && decodedPayload.userId) {
+          decodedPayload._id = decodedPayload.userId;
         }
 
         // setting user in req
         req.user = decodedPayload;
-        // if i get the token, and its valid then it will call next step
+        // call the next middleware/handler
         next();
       });
     } catch (error) {
-      // if any error occurs , it will send to the global error handler
+      // if any error occurs, it will send to the global error handler
       next(error);
     }
   };

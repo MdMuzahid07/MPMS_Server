@@ -28,6 +28,18 @@ const userSchema = new Schema<IUser>(
       enum: ["admin", "manager", "member"],
       default: "member",
     },
+    status: {
+      type: String,
+      enum: ["active", "inactive"],
+      default: "active",
+    },
+    skills: {
+      type: [String],
+      default: [],
+    },
+    department: {
+      type: String,
+    },
     isActive: {
       type: Boolean,
       default: true,

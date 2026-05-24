@@ -1,6 +1,7 @@
 import httpStatus from "http-status";
 import type { FilterQuery } from "mongoose";
 import { Types } from "mongoose";
+
 import AppError from "../../errors/AppError";
 import { TaskModel } from "../task/task.model";
 import { TimeLogModel } from "../timelog/timelog.model";
@@ -11,8 +12,14 @@ import { UserModel } from "./user.model";
 const buildUserFilter = (filters: IUserFilters): FilterQuery<IUser> => {
   const query: FilterQuery<IUser> = {};
 
-  if (filters.role) query.role = filters.role;
-  if (filters.status) query.status = filters.status;
+  if (filters.role && String(filters.role) !== "all") {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    query.role = { $regex: `^${String(filters.role)}$`, $options: "i" } as any;
+  }
+  if (filters.status && String(filters.status) !== "all") {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    query.status = { $regex: `^${String(filters.status)}$`, $options: "i" } as any;
+  }
   if (filters.department) {
     query.department = { $regex: filters.department, $options: "i" };
   }
@@ -20,6 +27,8 @@ const buildUserFilter = (filters: IUserFilters): FilterQuery<IUser> => {
     query.$or = [
       { name: { $regex: filters.search, $options: "i" } },
       { email: { $regex: filters.search, $options: "i" } },
+      { role: { $regex: filters.search, $options: "i" } },
+      { skills: { $regex: filters.search, $options: "i" } },
     ];
   }
 

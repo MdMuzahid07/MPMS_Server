@@ -5,7 +5,7 @@ const createUser = z.object({
     name: z.string().min(2).max(100),
     email: z.string().email("Invalid email address"),
     password: z.string().min(6, "Password must be at least 6 characters").max(64),
-    role: z.enum(["ADMIN", "MANAGER", "MEMBER"]).default("MEMBER"),
+    role: z.enum(["admin", "manager", "member"]).default("member"),
     department: z.string().max(100).optional(),
     skills: z.array(z.string().min(1)).max(20).optional(),
   }),
@@ -17,7 +17,7 @@ const updateUser = z.object({
       name: z.string().min(2).max(100).optional(),
       department: z.string().max(100).optional(),
       skills: z.array(z.string().min(1)).max(20).optional(),
-      role: z.enum(["ADMIN", "MANAGER", "MEMBER"]).optional(),
+      role: z.enum(["admin", "manager", "member"]).optional(),
       status: z.enum(["active", "inactive"]).optional(),
     })
     .strict(),

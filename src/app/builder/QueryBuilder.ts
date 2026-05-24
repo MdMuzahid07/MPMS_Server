@@ -17,7 +17,7 @@ class QueryBuilder<T> {
           (field) =>
             ({
               [field]: { $regex: searchTerm, $options: "i" },
-            }) as FilterQuery<T>,
+            }) as FilterQuery<T>
         ),
       });
     }
@@ -33,14 +33,17 @@ class QueryBuilder<T> {
 
     excludeFields.forEach((el) => delete queryObj[el]);
 
-    this.modelQuery = this.modelQuery.find(queryObj as FilterQuery<T>);
+    // Convert keys like gte, gt, lte, lt, ne, in, regex, options to $gte, etc.
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt|ne|in|regex|options)\b/g, (match) => `$${match}`);
+
+    this.modelQuery = this.modelQuery.find(JSON.parse(queryStr) as FilterQuery<T>);
 
     return this;
   }
 
   sort() {
-    const sort =
-      (this?.query?.sort as string)?.split(",")?.join(" ") || "-createdAt";
+    const sort = (this?.query?.sort as string)?.split(",")?.join(" ") || "-createdAt";
     this.modelQuery = this.modelQuery.sort(sort as string);
 
     return this;
@@ -57,8 +60,7 @@ class QueryBuilder<T> {
   }
 
   fields() {
-    const fields =
-      (this?.query?.fields as string)?.split(",")?.join(" ") || "-__v";
+    const fields = (this?.query?.fields as string)?.split(",")?.join(" ") || "-__v";
 
     this.modelQuery = this.modelQuery.select(fields);
 

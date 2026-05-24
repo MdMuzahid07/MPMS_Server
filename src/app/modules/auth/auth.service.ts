@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import httpStatus from "http-status";
+
 import config from "../../config";
 import CustomAppError from "../../errors/AppError";
 import { ILoginPayload, IRegisterPayload, ITokenPayload } from "./auth.interface";
@@ -66,6 +67,7 @@ const registerUser = async (payload: IRegisterPayload, isInvite = false) => {
   });
 
   const jwtPayload: ITokenPayload = {
+    _id: String(user._id),
     userId: String(user._id),
     email: user.email,
     role: user.role,
@@ -109,6 +111,7 @@ const loginUser = async (payload: ILoginPayload) => {
   }
 
   const jwtPayload: ITokenPayload = {
+    _id: String(user._id),
     userId: String(user._id),
     email: user.email,
     role: user.role,
@@ -146,6 +149,7 @@ const refreshToken = async (token: string) => {
   }
 
   const jwtPayload: ITokenPayload = {
+    _id: String(user._id),
     userId: String(user._id),
     email: user.email,
     role: user.role,

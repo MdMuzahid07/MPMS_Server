@@ -1,4 +1,5 @@
 export type TUserRole = "admin" | "manager" | "member";
+export type TUserStatus = "active" | "inactive";
 
 export interface IUser {
   _id: string;
@@ -8,6 +9,9 @@ export interface IUser {
   role: TUserRole;
   isActive: boolean;
   isDeleted: boolean;
+  status: TUserStatus;
+  skills: string[];
+  department: string;
 }
 
 export interface ILoginPayload {
@@ -23,6 +27,7 @@ export interface IRegisterPayload {
 }
 
 export interface ITokenPayload {
+  _id: string;
   userId: string;
   email: string;
   role: TUserRole;
