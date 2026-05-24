@@ -7,6 +7,7 @@ import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import hpp from "hpp";
 import morgan from "morgan";
+
 import config from "./app/config";
 import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 import NotFound from "./app/middlewares/notFound";
@@ -82,13 +83,16 @@ const apiLimiter = rateLimit({
 });
 
 // parsers
-app.use(express.json({ limit: "10kb" })); // Body limit
-app.use(express.urlencoded({ extended: true, limit: "10kb" }));
+app.use((req, res, next) => {
+  if (req.path.includes("/projects") && req.method === "POST") {
+    console.log("INCOMING HEADERS:", req.headers);
+  }
+  next();
+});
+app.use(express.json({ limit: "50mb" })); // Increased body limit just in case
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
-const allowedOrigins =
-  config.NODE_ENV === "production"
-    ? [""]
-    : ["http://localhost:3000"];
+const allowedOrigins = config.NODE_ENV === "production" ? [""] : ["http://localhost:3000"];
 
 app.use(
   cors({

@@ -10,6 +10,8 @@ const createProject = z.object({
     budget: z.coerce.number().min(0),
     status: z.enum(["planned", "active", "completed", "archived"]).default("planned"),
     members: z.array(z.string()).optional(),
+    thumbnail: z.string().optional(),
+    thumbnailPublicId: z.string().optional(),
   }),
 });
 
@@ -23,6 +25,8 @@ const updateProject = z.object({
     budget: z.coerce.number().min(0).optional(),
     status: z.enum(["planned", "active", "completed", "archived"]).optional(),
     members: z.array(z.string()).optional(),
+    thumbnail: z.string().optional(),
+    thumbnailPublicId: z.string().optional(),
   }),
 });
 

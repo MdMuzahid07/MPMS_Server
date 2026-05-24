@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
+
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/send.response";
 import { ProjectService } from "./project.service";
@@ -34,7 +35,7 @@ const getProjectById = catchAsync(async (req: Request, res: Response, _next: Nex
 });
 
 const createProject = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
-  const project = await ProjectService.createProject(req.body, req.user._id.toString(), req.file);
+  const project = await ProjectService.createProject(req.body, req.user._id.toString());
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
@@ -44,7 +45,7 @@ const createProject = catchAsync(async (req: Request, res: Response, _next: Next
 });
 
 const updateProject = catchAsync(async (req: Request, res: Response, _next: NextFunction) => {
-  const project = await ProjectService.updateProject(req.params.id, req.body, req.file);
+  const project = await ProjectService.updateProject(req.params.id, req.body);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

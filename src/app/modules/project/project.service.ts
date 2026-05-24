@@ -1,5 +1,6 @@
 import httpStatus from "http-status";
 import { Types } from "mongoose";
+
 import AppError from "../../errors/AppError";
 import { UploadService } from "../upload/upload.service";
 import type {
@@ -37,49 +38,16 @@ const getProjectById = async (id: string): Promise<IProject> => {
   return project;
 };
 
-const createProject = async (
-  payload: ICreateProject,
-  createdBy: string,
-  file?: Express.Multer.File
-): Promise<IProject> => {
-  let thumbnail: string | undefined;
-  let thumbnailPublicId: string | undefined;
-
-  if (file) {
-    const uploaded = await UploadService.uploadSingle(file, {
-      folder: "mpms/thumbnails",
-    });
-    thumbnail = uploaded.secure_url;
-    thumbnailPublicId = uploaded.public_id;
-  }
-
+const createProject = async (payload: ICreateProject, createdBy: string): Promise<IProject> => {
   return ProjectModel.create({
     ...payload,
-    thumbnail,
-    thumbnailPublicId,
     createdBy,
   });
 };
 
-const updateProject = async (
-  id: string,
-  payload: IUpdateProject,
-  file?: Express.Multer.File
-): Promise<IProject> => {
+const updateProject = async (id: string, payload: IUpdateProject): Promise<IProject> => {
   const project = await ProjectModel.findById(id);
   if (!project) throw new AppError(httpStatus.NOT_FOUND, "Project not found");
-
-  if (file) {
-    // Delete old thumbnail
-    if (project.thumbnailPublicId) {
-      await UploadService.deleteFile(project.thumbnailPublicId);
-    }
-    const uploaded = await UploadService.uploadSingle(file, {
-      folder: "mpms/thumbnails",
-    });
-    payload.thumbnail = uploaded.secure_url;
-    payload.thumbnailPublicId = uploaded.public_id;
-  }
 
   const updated = await ProjectModel.findByIdAndUpdate(id, payload, {
     new: true,

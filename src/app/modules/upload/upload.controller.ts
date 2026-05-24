@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import httpStatus from "http-status";
+
 import AppError from "../../errors/AppError";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/send.response";
@@ -10,9 +11,14 @@ const uploadImage = catchAsync(async (req: Request, res: Response) => {
     throw new AppError(httpStatus.BAD_REQUEST, "No file provided");
   }
 
-  const result = await UploadService.uploadSingle(req.file, {
-    folder: "mpms/general",
-  });
+  // Multer Cloudinary storage already uploaded the file.
+  const result = {
+    secure_url: req.file.path,
+    public_id: req.file.filename,
+    format: req.file.mimetype.split("/")[1],
+    bytes: req.file.size,
+    original_filename: req.file.originalname,
+  };
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -27,22 +33,20 @@ const uploadAttachment = catchAsync(async (req: Request, res: Response) => {
     throw new AppError(httpStatus.BAD_REQUEST, "No file provided");
   }
 
-  const isImage = req.file.mimetype.startsWith("image/");
-
-  const result = await UploadService.uploadSingle(req.file, {
-    folder: "mpms/attachments",
-    resourceType: isImage ? "image" : "raw",
-  });
+  const result = {
+    secure_url: req.file.path,
+    public_id: req.file.filename,
+    format: req.file.mimetype.split("/")[1],
+    bytes: req.file.size,
+    original_filename: req.file.originalname,
+    mimeType: req.file.mimetype,
+  };
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "Attachment uploaded successfully",
-    data: {
-      ...result,
-      originalName: req.file.originalname,
-      mimeType: req.file.mimetype,
-    },
+    data: result,
   });
 });
 

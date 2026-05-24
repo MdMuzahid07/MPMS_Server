@@ -1,4 +1,5 @@
 import { Router } from "express";
+
 import multerUploadConfig from "../../config/multer.config";
 import authorizationGuard from "../../middlewares/authorizationGuard";
 import requestValidator from "../../middlewares/requestValidator";
@@ -25,7 +26,6 @@ router.post(
 router.patch(
   "/:id",
   authorizationGuard("ADMIN", "MANAGER"),
-  multerUploadConfig.multerUpload.single("thumbnail"),
   requestValidator(ProjectValidation.updateProject),
   ProjectController.updateProject
 );

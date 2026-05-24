@@ -27,7 +27,7 @@ const moduleRoutes = [
     route: CommentRoutes,
   },
   {
-    path: "/project",
+    path: "/projects",
     route: ProjectRoutes,
   },
   {
