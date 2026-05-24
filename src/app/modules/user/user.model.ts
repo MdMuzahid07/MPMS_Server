@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { model, Schema } from "mongoose";
+import { model, models, Schema } from "mongoose";
 
 import type { IUser } from "./user.interface";
 
@@ -64,7 +64,7 @@ const userSchema = new Schema<IUser>(
 );
 
 // Indexes
-userSchema.index({ email: 1 });
+
 userSchema.index({ role: 1, status: 1 });
 userSchema.index({ name: "text", email: "text" });
 
@@ -80,4 +80,4 @@ userSchema.methods.comparePassword = function (candidate: string): Promise<boole
   return bcrypt.compare(candidate, this.password);
 };
 
-export const UserModel = model<IUser>("User", userSchema);
+export const UserModel = models.User || model<IUser>("User", userSchema);

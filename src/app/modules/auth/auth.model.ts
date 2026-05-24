@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
-import { Schema, model } from "mongoose";
+import { model, models, Schema } from "mongoose";
+
 import config from "../../config";
 import { IUser } from "./auth.interface";
 
@@ -59,4 +60,4 @@ userSchema.pre(/^find/, function (this: any, next) {
   next();
 });
 
-export const UserModel = model<IUser>("User", userSchema);
+export const UserModel = models.User || model<IUser>("User", userSchema);
