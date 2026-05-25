@@ -92,7 +92,10 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: "50mb" })); // Increased body limit just in case
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
-const allowedOrigins = config.NODE_ENV === "production" ? [""] : ["http://localhost:3000"];
+const allowedOrigins =
+  config.NODE_ENV === "production"
+    ? ["https://onyx-seven-theta.vercel.app"]
+    : ["http://localhost:3000"];
 
 app.use(
   cors({
