@@ -19,11 +19,11 @@ const moduleRoutes = [
     route: AuthRoutes,
   },
   {
-    path: "/activity",
+    path: "/tasks/:taskId/activity",
     route: ActivityRoutes,
   },
   {
-    path: "/comment",
+    path: "/tasks/:taskId/comments",
     route: CommentRoutes,
   },
   {

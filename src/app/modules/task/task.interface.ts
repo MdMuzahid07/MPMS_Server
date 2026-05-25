@@ -67,6 +67,7 @@ export interface ICreateTask {
   status?: TTaskStatus;
   dueDate?: Date;
   attachments?: ICreateAttachmentInput[];
+  subtasks?: { title: string; completed?: boolean }[];
 }
 
 export interface IUpdateTask extends Partial<ICreateTask> {

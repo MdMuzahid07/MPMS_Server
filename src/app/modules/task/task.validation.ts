@@ -7,6 +7,11 @@ const attachmentSchema = z.object({
   resourceType: z.enum(["image", "raw"]).optional(),
 });
 
+const subtaskInputSchema = z.object({
+  title: z.string().min(1).max(200),
+  completed: z.boolean().optional(),
+});
+
 const createTask = z.object({
   body: z.object({
     title: z.string().min(2).max(200),
@@ -17,6 +22,7 @@ const createTask = z.object({
     status: z.enum(["TODO", "IN_PROGRESS", "REVIEW", "DONE"]).default("TODO"),
     dueDate: z.coerce.date().optional(),
     attachments: z.array(attachmentSchema).optional(),
+    subtasks: z.array(subtaskInputSchema).optional(),
   }),
 });
 
@@ -31,6 +37,7 @@ const updateTask = z.object({
     dueDate: z.coerce.date().optional(),
     sprint: z.string().optional(),
     attachments: z.array(attachmentSchema).optional(),
+    subtasks: z.array(subtaskInputSchema).optional(),
   }),
 });
 
