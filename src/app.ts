@@ -95,7 +95,7 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 const allowedOrigins =
   config.NODE_ENV === "production"
     ? ["https://onyx-seven-theta.vercel.app"]
-    : ["http://localhost:3000"];
+    : ["http://localhost:3000", "https://onyx-seven-theta.vercel.app"];
 
 app.use(
   cors({
