@@ -1,4 +1,5 @@
-import { Schema, model } from "mongoose";
+import { model, Schema } from "mongoose";
+
 import type { ITimeLog } from "./timelog.interface";
 
 const timeLogSchema = new Schema<ITimeLog>(

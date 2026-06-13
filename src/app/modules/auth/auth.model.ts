@@ -25,7 +25,7 @@ const userSchema = new Schema<IUser>(
     },
     role: {
       type: String,
-      enum: ["admin", "manager", "member"],
+      enum: ["admin", "manager", "member", "ADMIN", "MANAGER", "MEMBER"],
       default: "member",
     },
     status: {
@@ -40,6 +40,8 @@ const userSchema = new Schema<IUser>(
     department: {
       type: String,
     },
+    avatar: { type: String, default: null },
+    avatarPublicId: { type: String, default: null },
     isActive: {
       type: Boolean,
       default: true,

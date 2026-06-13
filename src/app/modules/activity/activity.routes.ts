@@ -1,4 +1,5 @@
 import { Router } from "express";
+
 import authorizationGuard from "../../middlewares/authorizationGuard";
 import { ActivityController } from "./activity.controller";
 

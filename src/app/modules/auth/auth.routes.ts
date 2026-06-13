@@ -1,4 +1,5 @@
 import express from "express";
+
 import authorizationGuard from "../../middlewares/authorizationGuard";
 import requestValidator from "../../middlewares/requestValidator";
 import { AuthController } from "./auth.controller";
@@ -26,11 +27,7 @@ router.post(
 );
 
 // Authenticated
-router.get(
-  "/me",
-  authorizationGuard("admin", "manager", "member"),
-  AuthController.getMe
-);
+router.get("/me", authorizationGuard("admin", "manager", "member"), AuthController.getMe);
 
 router.patch(
   "/change-password",
@@ -39,11 +36,7 @@ router.patch(
   AuthController.changePassword
 );
 
-router.post(
-  "/logout",
-  authorizationGuard("admin", "manager", "member"),
-  AuthController.logout
-);
+router.post("/logout", authorizationGuard("admin", "manager", "member"), AuthController.logout);
 
 // Admin only
 router.post(

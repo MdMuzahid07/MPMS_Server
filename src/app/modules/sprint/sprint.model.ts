@@ -1,4 +1,5 @@
-import { Schema, model } from "mongoose";
+import { model, Schema } from "mongoose";
+
 import type { ISprint } from "./sprint.interface";
 
 const sprintSchema = new Schema<ISprint>(

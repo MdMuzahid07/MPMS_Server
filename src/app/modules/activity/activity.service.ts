@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+
 import type { IActivityFilters, ILogPayload } from "./activity.interface";
 import { ActivityLogModel } from "./activity.model";
 

@@ -1,4 +1,5 @@
-import { Schema, model } from "mongoose";
+import { model, Schema } from "mongoose";
+
 import type { IActivityLog } from "./activity.interface";
 
 const activityLogSchema = new Schema<IActivityLog>(

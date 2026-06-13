@@ -31,6 +31,7 @@
     "update-safe": "yarn upgrade",
     "update-check": "yarn upgrade-interactive --latest",
     "seed-admin": "ts-node ./src/seedAdmin.ts",
+    "seed": "ts-node ./src/seed.ts",
     "prepare": "husky",
     "lint-staged": "lint-staged",
     "type-check": "tsc --noEmit"

@@ -12,6 +12,8 @@ export interface IUser {
   status: TUserStatus;
   skills: string[];
   department: string;
+  avatar?: string;
+  avatarPublicId?: string;
 }
 
 export interface ILoginPayload {

@@ -14,6 +14,8 @@ export interface IUser extends Document {
   avatar?: string;
   avatarPublicId?: string;
   status: TUserStatus;
+  isActive?: boolean;
+  isDeleted?: boolean;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidate: string): Promise<boolean>;

@@ -1,4 +1,5 @@
-import { Schema, model } from "mongoose";
+import { model, Schema } from "mongoose";
+
 import type { ITask } from "./task.interface";
 
 const subtaskSchema = new Schema(
