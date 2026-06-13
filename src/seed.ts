@@ -36,14 +36,14 @@ const seedDatabase = async () => {
     // ======= 1. Seed Users (20 Users) =======
     console.log("👤 Seeding 20 Users...");
 
-    const adminPassword = config.admin_password || "MPMS@Admin12345";
-    const userPassword = "MPMS@User123";
+    const adminPassword = config.admin_password || "Onyx@Admin12345";
+    const userPassword = "Onyx@User123";
 
     const usersData = [
       // Admin (Male)
       {
         name: config.admin_name || "Super Admin",
-        email: config.admin_email || "mpms.admin@gmail.com",
+        email: config.admin_email || "onyx.admin@gmail.com",
         password: adminPassword,
         role: "admin",
         status: "active",
@@ -655,7 +655,7 @@ const seedDatabase = async () => {
       attachments: [
         {
           url: "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?auto=format&fit=crop&w=800&q=80",
-          publicId: "mpms/attachments/figma_mockup",
+          publicId: "onyx/attachments/figma_mockup",
           filename: "figma_ecommerce_mockup.png",
           resourceType: "image",
           uploadedBy: uMap.get("james.carter@company.com"),
@@ -820,7 +820,7 @@ const seedDatabase = async () => {
       attachments: [
         {
           url: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80",
-          publicId: "mpms/attachments/medical_charts",
+          publicId: "onyx/attachments/medical_charts",
           filename: "medical_charts_wireframe.png",
           resourceType: "image",
           uploadedBy: uMap.get("lily.nguyen@company.com"),
@@ -963,7 +963,7 @@ const seedDatabase = async () => {
       attachments: [
         {
           url: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
-          publicId: "mpms/attachments/helix_dashboard_mockup",
+          publicId: "onyx/attachments/helix_dashboard_mockup",
           filename: "helix_dashboard_layout.png",
           resourceType: "image",
           uploadedBy: uMap.get("sophia.rodriguez@company.com"),
@@ -1107,7 +1107,7 @@ const seedDatabase = async () => {
       attachments: [
         {
           url: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80",
-          publicId: "mpms/attachments/cloud_architecture",
+          publicId: "onyx/attachments/cloud_architecture",
           filename: "aws_vpc_topology.png",
           resourceType: "image",
           uploadedBy: uMap.get("william.harrison@company.com"),
@@ -1269,7 +1269,7 @@ const seedDatabase = async () => {
       attachments: [
         {
           url: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80",
-          publicId: "mpms/attachments/security_threat_model",
+          publicId: "onyx/attachments/security_threat_model",
           filename: "security_vulnerability_log.png",
           resourceType: "image",
           uploadedBy: uMap.get("arthur.pendragon@company.com"),
@@ -1429,7 +1429,7 @@ const seedDatabase = async () => {
       attachments: [
         {
           url: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80",
-          publicId: "mpms/attachments/zenith_wireframes",
+          publicId: "onyx/attachments/zenith_wireframes",
           filename: "zenith_crm_onboarding.png",
           resourceType: "image",
           uploadedBy: uMap.get("lily.nguyen@company.com"),

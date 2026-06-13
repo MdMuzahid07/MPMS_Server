@@ -108,7 +108,7 @@ const updateUser = async (
     }
 
     const uploaded = await UploadService.uploadSingle(file, {
-      folder: "mpms/avatars",
+      folder: "onyx/avatars",
       transformation: [{ width: 200, height: 200, crop: "fill", gravity: "face" }],
     });
 

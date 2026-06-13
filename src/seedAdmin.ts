@@ -17,8 +17,8 @@ const seedAdmin = async () => {
 
     // ======= Define Credentials =======
     const adminName = process.argv[2] || config.admin_name || "Super Admin";
-    const adminEmail = process.argv[3] || config.admin_email || "mpms.admin@gmail.com";
-    const adminPassword = process.argv[4] || config.admin_password || "MPMS@Admin12345";
+    const adminEmail = process.argv[3] || config.admin_email || "onyx.admin@gmail.com";
+    const adminPassword = process.argv[4] || config.admin_password || "Onyx@Admin12345";
 
     // ======= Check Existence =======
     const userExists = await UserModel.findOne({

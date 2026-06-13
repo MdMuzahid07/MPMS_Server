@@ -308,7 +308,7 @@ const deleteSubtask = async (taskId: string, subtaskId: string) => {
 const addAttachment = async (taskId: string, file: Express.Multer.File, userId: string) => {
   const isImage = file.mimetype.startsWith("image/");
   const uploaded = await UploadService.uploadSingle(file, {
-    folder: "mpms/attachments",
+    folder: "onyx/attachments",
     resourceType: isImage ? "image" : "raw",
   });
 
