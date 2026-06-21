@@ -4,6 +4,7 @@ import { Types } from "mongoose";
 import AppError from "../../errors/AppError";
 import { ActivityLogService } from "../activity/activity.service";
 import { SprintModel } from "../sprint/sprint.model";
+import { TimeLogModel } from "../timelog/timelog.model";
 import { UploadService } from "../upload/upload.service";
 import type { ICreateTask, ITask, ITaskFilters, IUpdateTask, TTaskStatus } from "./task.interface";
 import { TaskModel } from "./task.model";
@@ -360,6 +361,69 @@ const deleteAttachment = async (taskId: string, attachmentId: string, userId: st
   });
 };
 
+const toggleTimer = async (
+  taskId: string,
+  action: "start" | "stop",
+  userId: string
+): Promise<ITask> => {
+  const task = await TaskModel.findById(taskId);
+  if (!task) throw new AppError(httpStatus.NOT_FOUND, "Task not found");
+
+  if (action === "start") {
+    if (task.isTimerStopped) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "Timer has already been used and stopped for this task"
+      );
+    }
+    if (task.isTimerRunning) throw new AppError(httpStatus.BAD_REQUEST, "Timer is already running");
+
+    task.isTimerRunning = true;
+    task.timerStartedAt = new Date();
+    task.status = "IN_PROGRESS";
+    await task.save();
+
+    await ActivityLogService.log({
+      task: taskId,
+      user: userId,
+      action: "UPDATED",
+      detail: "Task timer started",
+    });
+  } else if (action === "stop") {
+    if (!task.isTimerRunning || !task.timerStartedAt) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Timer is not running");
+    }
+
+    const endTime = new Date();
+    const diffMs = endTime.getTime() - task.timerStartedAt.getTime();
+    const diffHours = diffMs / (1000 * 60 * 60);
+    const loggedHours = Math.max(0.1, Number(diffHours.toFixed(2)));
+
+    task.timeSpend += loggedHours;
+    task.isTimerRunning = false;
+    task.timerStartedAt = null;
+    task.isTimerStopped = true;
+    task.status = "DONE";
+    await task.save();
+
+    await TimeLogModel.create({
+      task: taskId,
+      user: userId,
+      hours: loggedHours,
+      description: "Auto-tracked via timer",
+    });
+
+    await ActivityLogService.log({
+      task: taskId,
+      user: userId,
+      action: "UPDATED",
+      detail: `Task timer stopped. Logged ${loggedHours} hours.`,
+    });
+  }
+
+  return task.populate(POPULATE_TASK);
+};
+
 export const TaskService = {
   getAllTasks,
   getTaskById,
@@ -375,4 +439,5 @@ export const TaskService = {
   deleteSubtask,
   addAttachment,
   deleteAttachment,
+  toggleTimer,
 };

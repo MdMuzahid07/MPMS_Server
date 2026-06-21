@@ -171,6 +171,20 @@ const deleteAttachment = catchAsync(async (req: Request, res: Response, _: NextF
   });
 });
 
+const toggleTimer = catchAsync(async (req: Request, res: Response, _: NextFunction) => {
+  const task = await TaskService.toggleTimer(
+    req.params.id,
+    req.body.action,
+    req.user._id.toString()
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: `Timer ${req.body.action}ed successfully`,
+    data: task,
+  });
+});
+
 export const TaskController = {
   getAllTasks,
   getTaskById,
@@ -186,4 +200,5 @@ export const TaskController = {
   deleteSubtask,
   addAttachment,
   deleteAttachment,
+  toggleTimer,
 };

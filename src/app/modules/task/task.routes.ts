@@ -24,6 +24,12 @@ globalTaskRouter.patch(
   TaskController.updateStatus
 );
 globalTaskRouter.patch(
+  "/:id/timer",
+  authorizationGuard("MEMBER"),
+  requestValidator(TaskValidation.toggleTimer),
+  TaskController.toggleTimer
+);
+globalTaskRouter.patch(
   "/:id/approve",
   authorizationGuard("ADMIN", "MANAGER"),
   TaskController.approveTask

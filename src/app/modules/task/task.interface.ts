@@ -32,9 +32,13 @@ export interface ITask extends Document {
   status: TTaskStatus;
   estimate?: number; // hours
   dueDate?: Date;
+  timeSpend: number;
   subtasks: ISubtask[];
   attachments: IAttachment[];
   taskNumber: number; // auto-increment per project
+  isTimerRunning: boolean;
+  timerStartedAt?: Date | null;
+  isTimerStopped: boolean;
   createdBy: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;

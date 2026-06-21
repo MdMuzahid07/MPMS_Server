@@ -60,10 +60,17 @@ const updateSubtask = z.object({
   }),
 });
 
+const toggleTimer = z.object({
+  body: z.object({
+    action: z.enum(["start", "stop"]),
+  }),
+});
+
 export const TaskValidation = {
   createTask,
   updateTask,
   updateStatus,
   createSubtask,
   updateSubtask,
+  toggleTimer,
 };

@@ -57,10 +57,17 @@ const taskSchema = new Schema<ITask>(
       default: "TODO",
     },
     estimate: { type: Number, min: 0 },
+    timeSpend: {
+      type: Number,
+      default: 0,
+    },
     dueDate: { type: Date },
     subtasks: [subtaskSchema],
     attachments: [attachmentSchema],
     taskNumber: { type: Number, required: true },
+    isTimerRunning: { type: Boolean, default: false },
+    timerStartedAt: { type: Date, default: null },
+    isTimerStopped: { type: Boolean, default: false },
     createdBy: {
       type: Schema.Types.ObjectId,
       ref: "User",
